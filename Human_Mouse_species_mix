@@ -138,15 +138,6 @@ OUTPUT_STATS=my.synthesis_stats.txt \
 SUMMARY=my.synthesis_stats.summary.txt \
 PRIMER_SEQUENCE=AAGCAGTGGTATCAACGCAGAGTAC
 
-#DigitalExpression
-#きちんと配列などがあるか確認
-DigitalExpression \
-TMP_DIR=./TMP \
-I=my_clean.bam \
-O=my.dge.txt.gz \
-SUMMARY=my.dge.summary.txt \
-NUM_CORE_BARCODES=100
-
 #Cell Selection
 BAMTagHistogram \
 TMP_DIR=./TMP \
@@ -161,13 +152,14 @@ x=x/max(x)
 plot(1:length(x), x, type='l', col="blue", xlab="cell barcodes sorted by number of reads [descending]",
 ylab="cumulative fraction of reads", xlim=c(1,1500))
 
-#Collection single cell data form Cell count matrix
+#DigitalExpression of total cells
 DigitalExpression \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=500.dge.txt.gz \
 SUMMARY=500.dge.summary.txt \
 NUM_CORE_BARCODES=500
+#後日GEOをいれる
 
 #FilterBam into Human/Mouse
 #For human
@@ -184,7 +176,7 @@ I=my_clean.bam \
 O=my_clean_MOUSE.bam \
 REF_SOFT_MATCHED_RETAINED=MOUSE
 
-#DigitalExpression on each species
+#DigitalExpression of each specie
 #HUMAN
 DigitalExpression \
 TMP_DIR=./TMP \
@@ -192,6 +184,7 @@ I=my_clean_HUMAN.bam \
 O=HUMAN.dge.txt.gz \
 SUMMARY=HUMAN.dge.summary.txt \
 CELL_BC_FILE=500list.txt
+#後日GEOをいれる
 
 #MOUSE
 DigitalExpression \
@@ -200,6 +193,7 @@ I=my_clean_MOUSE.bam \
 O=MOUSE.dge.txt.gz \
 SUMMARY=MOUSE.dge.summary.txt \
 CELL_BC_FILE=500list.txt
+#後日GEOをいれる
 
 #SP-mix plotting on the R
 human=read.table("HUMAN.dge.summary.txt", header=T, stringsAsFactors=F)
