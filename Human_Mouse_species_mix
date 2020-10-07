@@ -1,6 +1,7 @@
 #fastq to bam
 #fastqファイルをbamファイルに変換する
 java -jar picard.jar FastqToSam \
+#後日DDBJのURLを記入する
 F1=3p133Lib2_S1_L001_R1_001.fastq \
 F2=3p133Lib2_S1_L001_R2_001.fastq \
 O=fqtobam.bam \
@@ -80,6 +81,7 @@ FASTQ=unaligned_mc_tagged_polyA_filtered.fastq
 cat unaligned_mc_tagged_polyA_filtered.fastq | seqkit seq -m 20 > unaligned_mc_tagged_polyA_20bpfiltered.fastq
 
 #Buiding database on Hisat2
+#human and mouse transgenes reference metadata was obtained from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63269
 hisat2-build hg19_mm10_transgenes.fasta hg19_mm10
 
 #Hisat alignment
