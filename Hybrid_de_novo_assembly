@@ -104,5 +104,5 @@ seqkit stats -a okayset/Mj_hem_raw.okay.mrna
 #okayset/Mj_hem_raw.okay.mrna  FASTA   DNA     30,986  59,567,966      232  1,922.4   29,031  659  1,371  2,530        0  2,902       0       0
 
 #Renaming of headers
-seqtk seq -C Mj_evigene.fasta > seqs.fa.tmp
-seqtk rename seqs.fa.tmp Mj- > Mj_evigene_rename.fasta
+seqtk seq -C /Mj_hem_raw.okay.mrna > seqs.fa.tmp
+seqtk rename seqs.fa.tmp Mj- > Mj_hem_tr.fasta
