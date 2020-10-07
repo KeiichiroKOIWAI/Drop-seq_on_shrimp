@@ -1,6 +1,6 @@
 #fastq to bam
 #fastqファイルをbamファイルに変換する
-java -jar ../picard-2.23.1/picard.jar FastqToSam \
+java -jar picard.jar FastqToSam \
 F1=3p133Lib2_S1_L001_R1_001.fastq \
 F2=3p133Lib2_S1_L001_R2_001.fastq \
 O=fqtobam.bam \
@@ -8,19 +8,14 @@ SM=HM
 
 #bam sort
 #並びを整える
-java -jar ../picard-2.23.1/picard.jar SortSam \
+java -jar picard.jar SortSam \
 I=fqtobam.bam \
 O=sorted.bam \
 SORT_ORDER=queryname
 
-#Drop-seq tool
-#This Drop-seq program extracts bases from the cell/molecular barcode encoding read (BARCODED_READ), and creates a new BAM tag with those bases on the genome read. By default, we use the BAM tag XM for molecular barcodes, and XC for cell barcodes, using the TAG_NAME parameter.
-#This program is run once per barcode extraction to add a tag. On the first iteration, the cell barcode is extracted from bases 1-12. This is controlled by the BASE_RANGE option. On the second iteration, the molecular barcode is extracted from bases 13-20 of the barcode read. This program has an option to drop a read (DISCARD_READ), which we use after both barcodes have been extracted, which makes the output BAM have unpaired reads with additional tags.
-#Additionally, this program has a BASE_QUALITY option, which is the minimum base quality of all bases of the barcode being extracted. If more than NUM_BASES_BELOW_QUALITY bases falls below this quality, the read pair is discarded.
-
-#Cell barcode
+#Cell barcode using Drop-seq_tools-2.3.0
 #bamファイルにcellバーコードのタグをくっつける
-../Drop-seq_tools-2.3.0/TagBamWithReadSequenceExtended \
+TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=sorted.bam \
 OUTPUT=unaligned_tagged_Cell.bam \
@@ -34,7 +29,7 @@ NUM_BASES_BELOW_QUALITY=1
 
 #Molecular barcode
 #bamファイルにmolecularバーコードのタグをくっつけ
-../Drop-seq_tools-2.3.0/TagBamWithReadSequenceExtended \
+TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=unaligned_tagged_Cell.bam \
 OUTPUT=unaligned_tagged_CellMolecular.bam \
@@ -47,8 +42,7 @@ TAG_NAME=XM \
 NUM_BASES_BELOW_QUALITY=1
 
 #FilterBam:
-#This Drop-seq program is used to remove reads where the cell or molecular barcode has low quality bases. During the run of TagBamWithReadSequenceExtended, an XQ tag is added to each read to represent the number of bases that have quality scores below the BASE_QUALITY threshold. These reads are then removed from the BAM.
-../Drop-seq_tools-2.3.0/FilterBam \
+FilterBam \
 TMP_DIR=./TMP \
 -m 10g \
 TAG_REJECT=XQ \
@@ -56,8 +50,7 @@ INPUT=unaligned_tagged_CellMolecular.bam \
 OUTPUT=unaligned_tagged_filtered.bam
 
 #TrimStartingSequence
-#This Drop-seq program is one of two sequence cleanup programs designed to trim away any extra sequence that might have snuck it’s way into the reads. In this case, we trim the SMART Adapter that can occur 5’ of the read. In our standard run, we look for at least 5 contiguous bases (NUM_BASES) of the SMART adapter (SEQUENCE) at the 5’ end of the read with no errors (MISMATCHES) , and hard clip those bases off the read.
-../Drop-seq_tools-2.3.0/TrimStartingSequence \
+TrimStartingSequence \
 TMP_DIR=./TMP \
 -m 10g \
 INPUT=unaligned_tagged_filtered.bam \
@@ -68,8 +61,7 @@ MISMATCHES=0 \
 NUM_BASES=5
 
 #PolyATrimmer
-#This Drop-seq program is the second sequence cleanup program designed to trim away trailing polyA tails from reads. It searches for at least 6 (NUM_BASES) contiguous A’s in the read with 0 mismatches (MISMATCHES), and hard clips the read to remove these bases and all bases 3’ of the polyA run.
-../Drop-seq_tools-2.3.0/PolyATrimmer \
+PolyATrimmer \
 TMP_DIR=./TMP \
 INPUT=unaligned_tagged_trimmed_smart.bam \
 OUTPUT=unaligned_mc_tagged_polyA_filtered.bam \
@@ -79,54 +71,40 @@ NUM_BASES=6 \
 USE_NEW_TRIMMER=true
 
 #SamToFastq
-#Now that your data has had the cell and molecular barcodes extracted, the reads have been cleaned of SMARTSeq primer and polyA tails, and the data is now unpaired reads, it’s time to align. To do this, we extract the FASTQ files using Picard’s SamToFastq program.
 java -jar ../picard-2.23.1/picard.jar SamToFastq \
 INPUT=unaligned_mc_tagged_polyA_filtered.bam \
 FASTQ=unaligned_mc_tagged_polyA_filtered.fastq
 
+#Removing sequences less than 20 bp
 #20bp以下の配列を削除
 cat unaligned_mc_tagged_polyA_filtered.fastq | seqkit seq -m 20 > unaligned_mc_tagged_polyA_20bpfiltered.fastq
 
-#Hisat2 build
-#hisat2-build ../hg19_mm10_transgenes.fasta hg19_mm10
+#Buiding database on Hisat2
+hisat2-build hg19_mm10_transgenes.fasta hg19_mm10
 
 #Hisat alignment
 hisat2 \
 -p 12 \
 -q \
--x ../hisat2DB/hg19_mm10 \
+-x hg19_mm10 \
 -U unaligned_mc_tagged_polyA_20bpfiltered.fastq \
 -S aligned.sam \
 -t
 
-Time loading forward index: 00:00:27
-Time loading reference: 00:00:05
-Multiseed full-index search: 00:06:19
-26616575 reads; of these:
-  26616575 (100.00%) were unpaired; of these:
-    9011020 (33.85%) aligned 0 times
-    15630386 (58.72%) aligned exactly 1 time
-    1975169 (7.42%) aligned >1 times
-66.15% overall alignment rate
-Time searching: 00:06:25
-Overall time: 00:06:52
-
 #SAM validation
 java -Xmx4g -jar ../picard-2.23.1/picard.jar ValidateSamFile I=aligned2.sam MODE=SUMMARY
 
-#Hisat2の情報が入った行を消去
+#Removing rows that include information of Hisat2
 sed '256d' aligned.sam > aligned2.sam
 
 #samtobam/bam sort
-java -jar ../picard-2.23.1/picard.jar SortSam \
+java -jar picard.jar SortSam \
 I=aligned2.sam \
 O=aligned.sorted.bam \
 SO=queryname
 
 #MergeBamAlignment
-#This Picard program merges the sorted alignment output from STAR (ALIGNED_BAM) with the unaligned BAM that had been previously tagged with molecular/cell barcodes (UNMAPPED_BAM). This recovers the BAM tags that were “lost” during alignment. The REFERENCE_SEQUENCE argument refers to the fasta metadata file.
-#We ignore secondary alignments, as we want only the best alignment from STAR (or another aligner), instead of assigning a single sequencing read to multiple locations on the genome.
-java -jar ../picard-2.23.1/picard.jar MergeBamAlignment \
+java -jar picard.jar MergeBamAlignment \
 REFERENCE_SEQUENCE=hg19_mm10_transgenes.fasta \
 UNMAPPED_BAM=unaligned_mc_tagged_polyA_filtered.bam \
 ALIGNED_BAM=aligned.sorted.bam \
@@ -135,22 +113,21 @@ INCLUDE_SECONDARY_ALIGNMENTS=false \
 PAIRED_RUN=false
 
 #TagReadWithGeneFunction
-#Our replacement for TagReadWithGeneExon is TagReadWithGeneFunction. This program provides a more flexible and informative set of tags for reads that allow downstream programs to measure not only digital expression of reads that overlap exons, but can leverage reads that introns as well. This program provides 3 tags for each read, gn [gene name], gs [gene strand] and gf [gene function]. These tags can have more than one value, and the values are comma separated. These tags can also co-exist with the original tagger (TagReadWithGeneExon) as the tag names are different, so if you use those tags for other purposes, you can tag your BAM with both taggers.
-../Drop-seq_tools-2.3.0/TagReadWithGeneFunction \
+TagReadWithGeneFunction \
 TMP_DIR=./TMP \
 I=merged.bam \
 O=hisat2_gene_exon_tagged.bam \
 ANNOTATIONS_FILE=hg19_mm10_transgenes.refFlat
 
 #DetectBeadSubstitutionErrors - Detecting and repairing substitution errors in cell barcodes
-../Drop-seq_tools-2.3.0/DetectBeadSubstitutionErrors \
+DetectBeadSubstitutionErrors \
 TMP_DIR=./TMP \
 I=hisat2_gene_exon_tagged.bam \
 O=my_clean_subtitution.bam \
 OUTPUT_REPORT=my_clean.substitution_report.txt
 
 #DetectBeadSynthesisErrors
-../Drop-seq_tools-2.3.0/DetectBeadSynthesisErrors \
+DetectBeadSynthesisErrors \
 TMP_DIR=./TMP \
 I=my_clean_subtitution.bam \
 O=my_clean.bam \
@@ -161,7 +138,7 @@ PRIMER_SEQUENCE=AAGCAGTGGTATCAACGCAGAGTAC
 
 #DigitalExpression
 #きちんと配列などがあるか確認
-../Drop-seq_tools-2.3.0/DigitalExpression \
+DigitalExpression \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=my.dge.txt.gz \
@@ -169,39 +146,37 @@ SUMMARY=my.dge.summary.txt \
 NUM_CORE_BARCODES=100
 
 #Cell Selection
-../Drop-seq_tools-2.3.0/BAMTagHistogram \
+BAMTagHistogram \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=out_cell_readcounts.txt.gz \
 TAG=XC
 
-#Rで
+#on the R
 a=read.table("out_cell_readcounts.txt.gz", header=F, stringsAsFactors=F)
 x=cumsum(a$V1)
 x=x/max(x)
 plot(1:length(x), x, type='l', col="blue", xlab="cell barcodes sorted by number of reads [descending]",
 ylab="cumulative fraction of reads", xlim=c(1,1500))
 
-#Cell countの結果から細胞を抽出
-../Drop-seq_tools-2.3.0/DigitalExpression \
+#Collection single cell data form Cell count matrix
+DigitalExpression \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=500.dge.txt.gz \
 SUMMARY=500.dge.summary.txt \
 NUM_CORE_BARCODES=500
 
-#cellバーコードのリスト作成
-これはexcelでもなんでもOK
-500list.txt
-
 #FilterBam into Human/Mouse
-../Drop-seq_tools-2.3.0/FilterBam \
+#For human
+FilterBam \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=my_clean_HUMAN.bam \
 REF_SOFT_MATCHED_RETAINED=HUMAN
 
-../Drop-seq_tools-2.3.0/FilterBam \
+#For mouse
+FilterBam \
 TMP_DIR=./TMP \
 I=my_clean.bam \
 O=my_clean_MOUSE.bam \
@@ -209,7 +184,7 @@ REF_SOFT_MATCHED_RETAINED=MOUSE
 
 #DigitalExpression on each species
 #HUMAN
-../Drop-seq_tools-2.3.0/DigitalExpression \
+DigitalExpression \
 TMP_DIR=./TMP \
 I=my_clean_HUMAN.bam \
 O=HUMAN.dge.txt.gz \
@@ -217,14 +192,14 @@ SUMMARY=HUMAN.dge.summary.txt \
 CELL_BC_FILE=500list.txt
 
 #MOUSE
-../Drop-seq_tools-2.3.0/DigitalExpression \
+DigitalExpression \
 TMP_DIR=./TMP \
 I=my_clean_MOUSE.bam \
 O=MOUSE.dge.txt.gz \
 SUMMARY=MOUSE.dge.summary.txt \
 CELL_BC_FILE=500list.txt
 
-#RでSP-mix plot
+#SP-mix plotting on the R
 human=read.table("HUMAN.dge.summary.txt", header=T, stringsAsFactors=F)
 mouse=read.table("MOUSE.dge.summary.txt", header=T, stringsAsFactors=F)
 human.bc=human[order(human$CELL_BARCODE),]
@@ -237,7 +212,7 @@ human.plot=spmix[spmix$I>=0.9,]
 mouse.plot=spmix[spmix$J>=0.9,]
 mix.plot=spmix[spmix$I<0.9&spmix$J<0.9,]
 
-#作図
+#Plotting a figure
 library(ggplot2)
 library(extrafont)
 extrafont::loadfonts(device = "win")
@@ -253,6 +228,3 @@ fig=ggplot(NULL)+ #キャンバス用意。使うデータ宣言。aes()の中�
     theme(text=element_text(size=18, family="Arial"))+
     theme(axis.ticks=element_line(colour = "black"),　axis.text=element_text(colour = "black"))
 fig
-
-#細胞のタグを出力
- write(human.plot$A, file="scHuman.txt")
