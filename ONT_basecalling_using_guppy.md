@@ -1,10 +1,10 @@
-#Get guppy software
+## Get guppy software
 wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_3.6.1_linux64.tar.gz
 
-#Untar files
+## Untar files
 tar xzvf ont-guppy_3.6.1_linux64.tar.gz
 
-#Basecalling
+## Basecalling
 /content/ont-guppy/bin/guppy_basecaller \
 --input_path /"path_to_fast5_files" \
 --flowcell FLO-MIN106 --kit SQK-RNA002 \
@@ -13,18 +13,19 @@ tar xzvf ont-guppy_3.6.1_linux64.tar.gz
 -x auto \
 --u_substitution on
 
-#cat all fastaq files
+## cat all fastaq files
 
-#remove duplicates
-python3
-from pyBioTools import Fastq
-from pyBioTools.common import jhelp
-Fastq.Filter ("./fastq", "./ONT_fastq.fastq", remove_duplicates=True)
+## remove duplicates
+[pyBioTools](https://github.com/a-slide/pyBioTools)  
+python3 \
+from pyBioTools import Fastq \
+from pyBioTools.common import jhelp \
+Fastq.Filter ("./fastq", "./ONT_fastq.fastq", remove_duplicates=True) \
 exit()
 
-#U>T
+## U>T
 cat ONT_fastq.fastq | seqkit replace -p 'U' -r 'T' -s > ONT_final.fastq
 
-#NanoPlot
-#http://kazumaxneo.hatenablog.com/entry/2017/10/07/145705
+## NanoPlot
+[NanoPlot](https://github.com/wdecoster/NanoPlot)  
 NanoPlot --fastq ONT_final.fastq --loglength -t 8 -o OUTDIR
