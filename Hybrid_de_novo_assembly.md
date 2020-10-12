@@ -14,7 +14,8 @@ jellyfish dump -c jellyfish21 > jellyfish21.dump
 [TALC software](https://gitlab.igh.cnrs.fr/lbroseus/TALC) [bioRxiv](https://www.biorxiv.org/content/10.1101/2020.01.10.901728v3)  
 talc "ONT_basecalled_sequence.fastq" --SRCounts  jellyfish21.dump -k 21 -o talc -t 10  
 
-## Hybrid assenbly ONT/miseq by RNAspades
+## Hybrid assenbly ONT/miseq by rnaSPAdes
+[rnaSPAdes](https://cab.spbu.ru/software/rnaspades/)  
 rnaspades.py \
 --threads 12 \
 --memory 28 \
@@ -25,11 +26,11 @@ rnaspades.py \
 -o rnaSPAdes
 
 ## Seqkit stats
+[seqkit](https://bioinf.shenwei.me/seqkit/)  
 seqkit stats -a rnaSPAdes/transcripts.fasta
-file                          format  type  num_seqs     sum_len  min_len  avg_len  max_len   Q1   Q2     Q3  sum_gap    N50  Q20(%)  Q30(%)
-rnaSPAdes/transcripts.fasta  FASTA   DNA     39,757  44,545,567       92  1,120.4   29,031  296  487  1,342        0  2,320       0       0
 
 ## launch docker Trinity
+[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki)  
 docker run -v $mnt/h/tri:/usr/local/data -it trinityrnaseq/trinityrnaseq
 
 ## Hybrid assembly ONT/miseq by Trinity
@@ -46,53 +47,16 @@ Trinity \
 
 ## Seqkit stats
 seqkit stats -a trinity/Trinity.fasta
-file                    format  type  num_seqs     sum_len  min_len  avg_len  max_len   Q1   Q2     Q3  sum_gap    N50  Q20(%)  Q30(%)
-trinity/Trinity.fasta  FASTA   DNA     69,126  77,715,789      185  1,124.3   20,174  300  533  1,391        0  2,204       0       0
 
 ## Trinity stats
 bin/trinityrnaseq/util/TrinityStats.pl \
 data/trinity/Trinity.fasta
 
-################################
-## Counts of transcripts, etc.
-################################
-Total trinity 'genes':  44904
-Total trinity transcripts:      69126
-Percent GC: 42.76
-
-########################################
-Stats based on ALL transcript contigs:
-########################################
-
-        Contig N10: 6034
-        Contig N20: 4458
-        Contig N30: 3500
-        Contig N40: 2806
-        Contig N50: 2204
-
-        Median contig length: 533
-        Average contig: 1124.26
-        Total assembled bases: 77715789
-
-
-#####################################################
-## Stats based on ONLY LONGEST ISOFORM per 'GENE':
-#####################################################
-
-        Contig N10: 5491
-        Contig N20: 3891
-        Contig N30: 2942
-        Contig N40: 2220
-        Contig N50: 1643
-
-        Median contig length: 387
-        Average contig: 831.48
-        Total assembled bases: 37336692
-
 ## cat all fasta
 cat rnaSPAdes/transcripts.fasta trinity/Trinity.fasta > Mj_hem_raw.fasta
 
-## Removing XXXXXXXXXXX by XXXXXXXXXX
+## Remove duplicates and find coding contigs by EvidentialGene
+[EvidentialGene] (http://arthropods.eugenes.org/EvidentialGene/)  
 perl ../Evigene/scripts/prot/tr2aacds4.pl \
 -cdnaseq \
 Mj_hem_raw.fasta \
@@ -101,9 +65,8 @@ Mj_hem_raw.fasta \
 -logfile
 
 seqkit stats -a okayset/Mj_hem_raw.okay.mrna
-#file                          format  type  num_seqs     sum_len  min_len  avg_len  max_len   Q1     Q2     Q3  sum_gap    N50  Q20(%)  Q30(%)
-#okayset/Mj_hem_raw.okay.mrna  FASTA   DNA     30,986  59,567,966      232  1,922.4   29,031  659  1,371  2,530        0  2,902       0       0
 
 ## Renaming of headers
+[seqtk](https://github.com/lh3/seqtk)  
 seqtk seq -C /Mj_hem_raw.okay.mrna > seqs.fa.tmp
 seqtk rename seqs.fa.tmp Mj- > Mj_hem_tr.fasta
