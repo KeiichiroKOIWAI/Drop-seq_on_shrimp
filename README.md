@@ -13,8 +13,12 @@ URL of Raw file of short read sequence (DRA)
 URL of out put file (GEA)  
 
 ## Command lines for Drop-seq analysis of shrimp hemocytes
-command  
+[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Drop-seq_analysis_on_shrimp.md)   
 URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
+URL of out put file (GEA)  
+
+## Command lines for Seurat and monocle3 of shrimp hemocytes
+[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Seurat_and_monocle_shrimp.Rmd)  
 URL of out put file (GEA)  
 
 ## Command lines for Drop-seq analysis of human/mouse experiment
