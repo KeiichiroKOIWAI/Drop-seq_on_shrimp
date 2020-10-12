@@ -24,4 +24,3 @@ URL of out put file (GEA)
 ## Command lines for Drop-seq analysis of human/mouse experiment
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Human_Mouse_species_mix.md)  
 URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
-URL of out put file (GEA)  
