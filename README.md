@@ -3,22 +3,21 @@ These are commads for Drop-seq analyzing of hemocytes of kuruma shrimp (*Marsupe
 Here, we uploaded commads used on this paper.
 
 ## Basecalling of ONT RNA direct sequencing
-command
-[Google](https://www.google.co.jp/)
-URL of out put sequence URL (DRA)
+[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/ONT_basecalling_using_guppy)  
+Raw data used in this study URL of out put sequence URL (DRA)
 
 ## Hybrid assembly of ONT long seqence and illumina short read sequence
-command
-URL of Raw file of long read sequence (DRA)
-URL of Raw file of short read sequence (DRA)
-URL of out put file (GEA)
+[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Hybrid_de_novo_assembly)  
+URL of Raw file of long read sequence (DRA)  
+URL of Raw file of short read sequence (DRA)  
+URL of out put file (GEA)  
 
 ## Command lines for Drop-seq analysis of shrimp hemocytes
-command
-URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)
-URL of out put file (GEA)
+command  
+URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
+URL of out put file (GEA)  
 
 ## Command lines for Drop-seq analysis of human/mouse experiment
-command
-URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)
-URL of out put file (GEA)
+[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Human_Mouse_species_mix)  
+URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
+URL of out put file (GEA)  
