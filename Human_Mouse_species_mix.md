@@ -146,10 +146,10 @@ O=out_cell_readcounts.txt.gz \
 TAG=XC
 
 ## on the R
-a=read.table("out_cell_readcounts.txt.gz", header=F, stringsAsFactors=F)
-x=cumsum(a$V1)
-x=x/max(x)
-plot(1:length(x), x, type='l', col="blue", xlab="cell barcodes sorted by number of reads [descending]",
+a=read.table("out_cell_readcounts.txt.gz", header=F, stringsAsFactors=F) \
+x=cumsum(a$V1) \
+x=x/max(x) \
+plot(1:length(x), x, type='l', col="blue", xlab="cell barcodes sorted by number of reads [descending]", \
 ylab="cumulative fraction of reads", xlim=c(1,1500))
 
 ## DigitalExpression of total cells
@@ -214,7 +214,7 @@ library(extrafont) \
 extrafont::loadfonts(device = "win") \
 #https://rstudio-pubs-static.s3.amazonaws.com/459388_c0f0abce1612426c8aec91b678da8670.html
 
-fig=ggplot(NULL)+ #キャンバス用意。使うデータ宣言。aes()の中でx軸とy軸指定。
+fig=ggplot(NULL)+ \
     geom_point(aes(mix.plot$C,mix.plot$G), col="#E41A1C", alpha=0.5, size=4, shape=17)+ \
     geom_point(aes(human.plot$C,human.plot$G), col="#377EB8", alpha=0.5, size=4, shape=19)+ \
     geom_point(aes(mouse.plot$C,mouse.plot$G), col="#4DAF4A", alpha=0.5, size=4, shape=15)+ \
