@@ -159,7 +159,6 @@ I=my_clean.bam \
 O=500.dge.txt.gz \
 SUMMARY=500.dge.summary.txt \
 NUM_CORE_BARCODES=500
-#後日GEOをいれる
 
 ## FilterBam into Human/Mouse
 ### For human
@@ -184,7 +183,6 @@ I=my_clean_HUMAN.bam \
 O=HUMAN.dge.txt.gz \
 SUMMARY=HUMAN.dge.summary.txt \
 CELL_BC_FILE=500list.txt
-#後日GEOをいれる
 
 ### MOUSE
 DigitalExpression \
@@ -193,7 +191,6 @@ I=my_clean_MOUSE.bam \
 O=MOUSE.dge.txt.gz \
 SUMMARY=MOUSE.dge.summary.txt \
 CELL_BC_FILE=500list.txt
-#後日GEOをいれる
 
 ## SP-mix plotting on the R
 human=read.table("HUMAN.dge.summary.txt", header=T, stringsAsFactors=F) \
