@@ -1,21 +1,32 @@
 ## Get short read sequence of shrimp hemocyte
-### URL記入PRJDB4895
-unpigz -c PRJDB4895_L.fastq.gz > PRJDB4895_L.fastq  
-unpigz -c PRJDB4895_R.fastq.gz > PRJDB4895_R.fastq  
+In this study we used this raw sequences from kuruma shrimop hemocytes  
+DDBJ Sequence Read Archive (DRA) accession number [DRR004781](https://ddbj.nig.ac.jp/DRASearch/submission?acc=DRA004781)  
 
-## Counting kmer for TALC
-[jellyfish software](http://www.genome.umd.edu/jellyfish.html#Release)  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_1.fastq.bz2  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_2.fastq.bz2  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_1.fastq.bz2  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_2.fastq.bz2  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_1.fastq.bz2  
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_2.fastq.bz2  
+
+tar all files  
+
+cat DRR062578_1.fastq DRR062579_1.fastq DRR062580_1.fastq > PRJDB4895_L.fastq  
+cat DRR062578_2.fastq DRR062579_2.fastq DRR062580_2.fastq > PRJDB4895_R.fastq
+
+## Counting kmer
+[jellyfish software](http://www.genome.umd.edu/jellyfish.html#Release) var. 2.3.0  
 jellyfish count -m 21 -t 12 -s 10000000 -o jellyfish21 PRJDB4895_L.fastq PRJDB4895_R.fastq  
 
 ## jellyfish dump
 jellyfish dump -c jellyfish21 > jellyfish21.dump
 
 ## Long read sequencing correction by TALC
-[TALC software](https://gitlab.igh.cnrs.fr/lbroseus/TALC) [bioRxiv](https://www.biorxiv.org/content/10.1101/2020.01.10.901728v3)  
+[TALC software](https://gitlab.igh.cnrs.fr/lbroseus/TALC) [bioRxiv](https://www.biorxiv.org/content/10.1101/2020.01.10.901728v3) var. 1.01  
 talc "ONT_basecalled_sequence.fastq" --SRCounts  jellyfish21.dump -k 21 -o talc -t 10  
 
 ## Hybrid assenbly ONT/miseq by rnaSPAdes
-[rnaSPAdes](https://cab.spbu.ru/software/rnaspades/)  
+[rnaSPAdes](https://cab.spbu.ru/software/rnaspades/) var. 3.14.1
 rnaspades.py \
 --threads 12 \
 --memory 28 \
@@ -30,7 +41,7 @@ rnaspades.py \
 seqkit stats -a rnaSPAdes/transcripts.fasta
 
 ## launch docker Trinity
-[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki)  
+[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki) var. 2.10.0
 docker run -v $mnt/h/tri:/usr/local/data -it trinityrnaseq/trinityrnaseq
 
 ## Hybrid assembly ONT/miseq by Trinity
@@ -56,7 +67,7 @@ data/trinity/Trinity.fasta
 cat rnaSPAdes/transcripts.fasta trinity/Trinity.fasta > Mj_hem_raw.fasta
 
 ## Remove duplicates and find coding contigs by EvidentialGene
-[EvidentialGene] (http://arthropods.eugenes.org/EvidentialGene/)  
+[EvidentialGene] (http://arthropods.eugenes.org/EvidentialGene/) var. 2022.01.20  
 perl ../Evigene/scripts/prot/tr2aacds4.pl \
 -cdnaseq \
 Mj_hem_raw.fasta \
