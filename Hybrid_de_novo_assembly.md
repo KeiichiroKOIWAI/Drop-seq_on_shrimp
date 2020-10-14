@@ -26,7 +26,7 @@ jellyfish dump -c jellyfish21 > jellyfish21.dump
 talc "ONT_basecalled_sequence.fastq" --SRCounts  jellyfish21.dump -k 21 -o talc -t 10  
 
 ## Hybrid assenbly ONT/miseq by rnaSPAdes
-[rnaSPAdes](https://cab.spbu.ru/software/rnaspades/) var. 3.14.1
+[rnaSPAdes](https://cab.spbu.ru/software/rnaspades/) var. 3.14.1  
 rnaspades.py \
 --threads 12 \
 --memory 28 \
@@ -41,7 +41,7 @@ rnaspades.py \
 seqkit stats -a rnaSPAdes/transcripts.fasta
 
 ## launch docker Trinity
-[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki) var. 2.10.0
+[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki) var. 2.10.0  
 docker run -v $mnt/h/tri:/usr/local/data -it trinityrnaseq/trinityrnaseq
 
 ## Hybrid assembly ONT/miseq by Trinity
