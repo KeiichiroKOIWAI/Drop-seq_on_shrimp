@@ -99,7 +99,7 @@ cat unaligned_mc_tagged_polyA_filtered.fastq | seqkit seq -j 12 -m 20 > unaligne
 seqkit stat -j 6 unaligned_mc_tagged_polyA_20bpfiltered.fastq
 
 ## Bowtie2 index
-[bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) [ref](https://www.nature.com/articles/nmeth.1923) var. 2.4.1
+[bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) [ref](https://www.nature.com/articles/nmeth.1923) var. 2.4.1  
 bowtie2-build Mj_hem_tr.fasta Mj_hem
 
 ## Bowtie2 mapping
