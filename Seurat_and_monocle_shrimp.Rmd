@@ -1,4 +1,6 @@
-#https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+#Seurat
+https://satijalab.org/seurat/
+https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
 library(needs)
 needs(dplyr,Seurat,ggplot2,patchwork,broom,sinaplot,monocle3)
 
