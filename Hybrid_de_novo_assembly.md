@@ -22,7 +22,7 @@ jellyfish count -m 21 -t 12 -s 10000000 -o jellyfish21 PRJDB4895_L.fastq PRJDB48
 jellyfish dump -c jellyfish21 > jellyfish21.dump
 
 ## Long read sequencing correction by TALC
-[TALC software](https://gitlab.igh.cnrs.fr/lbroseus/TALC) [bioRxiv](https://www.biorxiv.org/content/10.1101/2020.01.10.901728v3) var. 1.01  
+[TALC](https://gitlab.igh.cnrs.fr/lbroseus/TALC) [ref](https://academic.oup.com/bioinformatics/advance-article-abstract/doi/10.1093/bioinformatics/btaa634/5872522?redirectedFrom=fulltext) var. 1.01  
 talc "ONT_basecalled_sequence.fastq" --SRCounts  jellyfish21.dump -k 21 -o talc -t 10  
 
 ## Hybrid assenbly ONT/miseq by rnaSPAdes
