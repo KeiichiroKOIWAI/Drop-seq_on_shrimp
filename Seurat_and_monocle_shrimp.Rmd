@@ -5,7 +5,6 @@ library(needs)
 needs(dplyr,Seurat,ggplot2,patchwork,broom,sinaplot,monocle3)
 
 #Import of data
-#データ読み込み
 data1=read.table(file = "1500.dge1.txt.gz", header = TRUE, row.names = 1)
 data2=read.table(file = "1500.dge2.txt.gz", header = TRUE, row.names = 1)
 data3=read.table(file = "1500.dge3.txt.gz", header = TRUE, row.names = 1)
