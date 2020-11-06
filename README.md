@@ -14,7 +14,7 @@ The raw sequence data of newly sequenced M. japonicus transcriptomic reads were 
 
 Two raw sequence data were used in this assembly, long reads:DRA010948 and short reads: DRA004781. 
 
-The assembled transcripts were deposited [here](https:).
+The assembled transcripts were deposited [here](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Mj_hem_transgenes_reference_metadata.tar.gz).
 
 ## Command lines for Drop-seq analysis of shrimp hemocytes
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Drop-seq_analysis_on_shrimp.md)   
