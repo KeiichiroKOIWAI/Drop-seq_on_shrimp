@@ -11,7 +11,6 @@ data2=read.table(file = "1500.dge2.txt.gz", header = TRUE, row.names = 1)
 data3=read.table(file = "1500.dge3.txt.gz", header = TRUE, row.names = 1)
 
 #Initialize the Seurat object with the raw (non-normalized data)
-#Seuratデータとして読み込みこの際に細胞・遺伝子などのフィルタリング
 Mj1=CreateSeuratObject(counts = data1, project = "Mj_hem1", min.cells = 0, min.features = 100)
 Mj2=CreateSeuratObject(counts = data2, project = "Mj_hem2", min.cells = 0, min.features = 100)
 Mj3=CreateSeuratObject(counts = data3, project = "Mj_hem3", min.cells = 0, min.features = 100)
