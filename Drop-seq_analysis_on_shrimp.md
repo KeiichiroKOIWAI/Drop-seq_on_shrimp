@@ -13,15 +13,13 @@ SEQUENCE_DICTIONARY=Mj_evigene.dict \
 OUTPUT=Mj_evigene.refFlat
 
 ## fastq to bam
-### fastqファイルをbamファイルに変換する
 java -jar ../../picard-2.23.1/picard.jar FastqToSam \
 F1=scRNA_hemX_1.fastq.gz \
 F2=scRNA_hemX_2.fastq.gz \
 O=fqtobamX.bam \
 SM=shrimpX
 
-# #bam sort
-### 並びを整える
+##bam sort
 java -jar ../../picard-2.23.1/picard.jar SortSam \
 I=fqtobamX.bam \
 O=sortedX.bam \
@@ -29,7 +27,6 @@ SORT_ORDER=queryname
 
 # Drop-seq tool
 ## Cell barcode
-### bamファイルにcellバーコードのタグをくっつける
 ../../Drop-seq_tools-2.3.0/TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=sorted.bam \
@@ -43,7 +40,6 @@ TAG_NAME=XC \
 NUM_BASES_BELOW_QUALITY=1
 
 ## Molecular barcode
-### bamファイルにmolecularバーコードのタグをくっつけ
 ../../Drop-seq_tools-2.3.0/TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=unaligned_tagged_Cell.bam \
