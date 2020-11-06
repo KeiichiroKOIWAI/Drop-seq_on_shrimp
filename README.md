@@ -19,9 +19,9 @@ The assembled transcripts were deposited [here](https://github.com/KeiichiroKOIW
 ## Command lines for Drop-seq analysis of shrimp hemocytes
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Drop-seq_analysis_on_shrimp.md)   
 
-The raw sequence data used in this assembly were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan: Drop-seq shrimp rep1: DRA010950, shrimp rep2: DRA010951, shrimp rep3: DRA010952. 
+The raw sequence data used in this study were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan: Drop-seq shrimp rep1: DRA010950, shrimp rep2: DRA010951, shrimp rep3: DRA010952. 
 
-The obtained data were deposited [here](https:)
+The obtained data were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan: XXXXXXXX
 
 ## Command lines for Seurat and monocle3 of shrimp hemocytes
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Seurat_and_monocle_shrimp.Rmd)  
