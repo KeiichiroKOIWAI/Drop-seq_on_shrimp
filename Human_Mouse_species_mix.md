@@ -1,5 +1,4 @@
 ## fastq to bam
-### fastqファイルをbamファイルに変換する
 java -jar picard.jar FastqToSam \
 #後日DDBJのURLを記入する
 F1=3p133Lib2_S1_L001_R1_001.fastq \
@@ -8,14 +7,12 @@ O=fqtobam.bam \
 SM=HM
 
 ## bam sort
-### 並びを整える
 java -jar picard.jar SortSam \
 I=fqtobam.bam \
 O=sorted.bam \
 SORT_ORDER=queryname
 
 ## Cell barcode using Drop-seq_tools-2.3.0
-### bamファイルにcellバーコードのタグをくっつける
 TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=sorted.bam \
@@ -29,7 +26,6 @@ TAG_NAME=XC \
 NUM_BASES_BELOW_QUALITY=1
 
 ## Molecular barcode
-### bamファイルにmolecularバーコードのタグをくっつけ
 TagBamWithReadSequenceExtended \
 TMP_DIR=./TMP \
 INPUT=unaligned_tagged_Cell.bam \
@@ -77,7 +73,6 @@ INPUT=unaligned_mc_tagged_polyA_filtered.bam \
 FASTQ=unaligned_mc_tagged_polyA_filtered.fastq
 
 ## Removing sequences less than 20 bp
-### 20bp以下の配列を削除
 cat unaligned_mc_tagged_polyA_filtered.fastq | seqkit seq -m 20 > unaligned_mc_tagged_polyA_20bpfiltered.fastq
 
 ## Buiding database on Hisat2
