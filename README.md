@@ -1,26 +1,27 @@
 # Drop-seq_on_shrimp
-These are commads for Drop-seq analyzing of hemocytes of kuruma shrimp (*Marsupenaues japonicus*). The detailed scientific explanation is published under BioRxiv (URL).  
-Here, we uploaded commads used on this paper.
+These are commads for Drop-seq analyzing of hemocytes of kuruma shrimp (*Marsupenaues japonicus*). The detailed scientific explanation is published under BioRxiv.  
+Here, I uploaded commads used on this paper.
+
+The data have been deposited with links to BioProject accession number PRJDB10658 in the DDBJ BioProject database.
 
 ## Basecalling of ONT RNA direct sequencing
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/ONT_basecalling_using_guppy.md)  
-Raw data used in this study URL of out put sequence URL (DRA)
+The raw sequence data of newly sequenced M. japonicus transcriptomic reads were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan : MinION mRNA direct sequencing: DRA010948. 
 
 ## Hybrid assembly of ONT long seqence and illumina short read sequence
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Hybrid_de_novo_assembly.md)  
-URL of Raw file of long read sequence (DRA)  
-URL of Raw file of short read sequence (DRA)  
-URL of out put file (GEA)  
+Two raw sequence data were used in this assembly, long reads:DRA010948 and short reads: DRA004781. 
+The assembled transcripts were deposited [here](https:).
 
 ## Command lines for Drop-seq analysis of shrimp hemocytes
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Drop-seq_analysis_on_shrimp.md)   
-URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
-URL of out put file (GEA)  
+The raw sequence data used in this assembly were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan: Drop-seq shrimp rep1: DRA010950, shrimp rep2: DRA010951, shrimp rep3: DRA010952. 
+The obtained data were deposited [here](https:)
 
 ## Command lines for Seurat and monocle3 of shrimp hemocytes
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Seurat_and_monocle_shrimp.Rmd)  
-URL of out put file (GEA)  
+The assembled transcripts were deposited [here](https:) 
 
 ## Command lines for Drop-seq analysis of human/mouse experiment
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Human_Mouse_species_mix.md)  
-URL of Raw sequence files of shrimp hemocyte drop-seq data (DRA)  
+The raw sequence data of newly sequenced  human/mouse cell transcriptomic reads were archived in DDBJ Sequence Read Archive (DRA) of the DNA Data Bank of Japan: mixture sample of HEK293 and 3T3 cells: DRA010949. 
