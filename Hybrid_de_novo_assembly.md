@@ -2,17 +2,17 @@
 In this study we used this raw sequences from kuruma shrimop hemocytes  
 DDBJ Sequence Read Archive (DRA) accession number [DRR004781](https://ddbj.nig.ac.jp/DRASearch/submission?acc=DRA004781)  
 
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_1.fastq.bz2  
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_2.fastq.bz2  
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_1.fastq.bz2  
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_2.fastq.bz2  
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_1.fastq.bz2  
-wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_2.fastq.bz2  
+`wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_1.fastq.bz2
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062578_2.fastq.bz2
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_1.fastq.bz2
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062579_2.fastq.bz2
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_1.fastq.bz2
+wget ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/fastq/DRA004/DRA004781/DRX056819/DRR062580_2.fastq.bz2`
 
 tar all files  
 
-cat DRR062578_1.fastq DRR062579_1.fastq DRR062580_1.fastq > PRJDB4895_L.fastq  
-cat DRR062578_2.fastq DRR062579_2.fastq DRR062580_2.fastq > PRJDB4895_R.fastq
+`cat DRR062578_1.fastq DRR062579_1.fastq DRR062580_1.fastq > PRJDB4895_L.fastq
+cat DRR062578_2.fastq DRR062579_2.fastq DRR062580_2.fastq > PRJDB4895_R.fastq`
 
 ## Counting kmer
 [jellyfish software](http://www.genome.umd.edu/jellyfish.html#Release) var. 2.3.0  
