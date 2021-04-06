@@ -1,8 +1,8 @@
 ## Get guppy software
-wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_3.6.1_linux64.tar.gz
+```wget https://mirror.oxfordnanoportal.com/software/analysis/ont-guppy_3.6.1_linux64.tar.gz```
 
 ## Untar files
-tar xzvf ont-guppy_3.6.1_linux64.tar.gz
+```tar xzvf ont-guppy_3.6.1_linux64.tar.gz```
 
 ## Basecalling
 /content/ont-guppy/bin/guppy_basecaller \
