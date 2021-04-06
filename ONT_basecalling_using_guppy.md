@@ -10,7 +10,7 @@
 ## cat all fastaq files
 
 ## remove duplicates
-[pyBioTools](https://github.com/a-slide/pyBioTools) 
+[pyBioTools](https://github.com/a-slide/pyBioTools)  
 ```python3 from pyBioTools import Fastq from pyBioTools.common import jhelp Fastq.Filter ("./fastq", "./ONT_fastq.fastq", remove_duplicates=True) exit()```
 
 ## U>T
