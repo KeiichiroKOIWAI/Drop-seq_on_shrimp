@@ -119,3 +119,17 @@ seqkit stats -a okayset/Mj_hem_raw.okay.mrna
 seqtk seq -C /Mj_hem_raw.okay.mrna > seqs.fa.tmp
 seqtk rename seqs.fa.tmp Mj- > Mj_hem_tr.fasta
 ```
+
+## BUSCO
+[BUSCO](https://busco.ezlab.org/) [ref](https://link.springer.com/protocol/10.1007%2F978-1-4939-9173-0_14) var.5.0.0
+Checking the quality of assembled transcripts.
+```
+## BUSCO
+busco \
+-m transcriptome \
+-i metadata/Mj_hem_tr.fasta \
+-o BUSCO_result \
+-l arthropoda_odb10 \
+-c 4 \
+-f
+```
