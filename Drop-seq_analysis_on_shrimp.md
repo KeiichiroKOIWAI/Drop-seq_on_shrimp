@@ -279,7 +279,8 @@ INPUT=unaligned_mc_tagged_polyA_filtered_shrimp3.bam \
 FASTQ=unaligned_mc_tagged_polyA_filtered_shrimp3.fastq
 ```
 
-## TrimGaola!
+## Trim Galore
+[Trim Galore](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/) var. 0.6.6
 
 Quality trimming
 
@@ -299,6 +300,7 @@ trim_galore unaligned_mc_tagged_polyA_filtered_shrimp3.fastq
 ```
 
 ## STAR
+[STAR](https://github.com/alexdobin/STAR) [ref](https://academic.oup.com/bioinformatics/article/29/1/15/272537) var. 2.7.8a
 
 ## Construction of a database
 
