@@ -5,13 +5,13 @@
 ```tar xzvf ont-guppy_3.6.1_linux64.tar.gz```
 
 ## Basecalling
-/content/ont-guppy/bin/guppy_basecaller \
+```/content/ont-guppy/bin/guppy_basecaller \
 --input_path /"path_to_fast5_files" \
 --flowcell FLO-MIN106 --kit SQK-RNA002 \
 --save_path /"path_to_save_folder" \
 --gpu_runners_per_device 20 \
 -x auto \
---u_substitution on
+--u_substitution on```
 
 ## cat all fastaq files
 
