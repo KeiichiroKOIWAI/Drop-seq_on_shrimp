@@ -1,5 +1,6 @@
 # Analysis of digital expression data by Seurat
 https://satijalab.org/seurat/
+All analysis was conducted on Rstudio
 
 ## Reading of libraries
 ```{r}
@@ -113,7 +114,7 @@ expression <- sort(expression, decreasing = TRUE)
 write.csv(expression, file="expression.csv")
 ```
 
-#File saving
+## File saving
 ```{r}
 write.csv(Markers, file="Markers.csv")
 saveRDS(Mj1e, file = "Mj1e.rds")
