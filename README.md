@@ -24,7 +24,8 @@ The raw sequence data used in this study were archived in DDBJ Sequence Read Arc
 The obtained data were archived in Genomic Expression Archive of the DNA Data Bank of Japan: E-GEAD-403.
 
 ## Command lines for Seurat and monocle3 of shrimp hemocytes
-[command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Seurat_and_monocle_shrimp.Rmd)  
+Until UMAP reductuion and clustering by Seurat. [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Seurat_and_monocle_shrimp.Rmd)  
+Until pseudotime analysis by Seurat and Monocle3. [command link](URL)
 
 ## Command lines for Drop-seq analysis of human/mouse experiment
 [command link](https://github.com/KeiichiroKOIWAI/Drop-seq_on_shrimp/blob/main/Human_Mouse_species_mix.md)  
