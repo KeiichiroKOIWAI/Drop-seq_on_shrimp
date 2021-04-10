@@ -1,140 +1,124 @@
-#Seurat
+# Analysis of digital expression data by Seurat
 https://satijalab.org/seurat/
-https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+## Reading of libraries
+```{r}
 library(needs)
-needs(dplyr,Seurat,ggplot2,patchwork,broom,sinaplot,monocle3)
+needs(dplyr,Seurat,ggplot2,SeuratWrappers,SeuratData,patchwork,broom,sinaplot,monocle3,glmGamPoi)
+```
 
-#Import of data
-data1=read.table(file = "1500.dge1.txt.gz", header = TRUE, row.names = 1)
-data2=read.table(file = "1500.dge2.txt.gz", header = TRUE, row.names = 1)
-data3=read.table(file = "1500.dge3.txt.gz", header = TRUE, row.names = 1)
+## Import data
+```{r}
+data1=read.table(file = "shrimp1.txt.gz", header = TRUE, row.names = 1)
+data2=read.table(file = "shrimp2.txt.gz", header = TRUE, row.names = 1)
+data3=read.table(file = "shrimp3.txt.gz", header = TRUE, row.names = 1)
+```
 
-#Initialize the Seurat object with the raw (non-normalized data)
+## Initialize the Seurat object with the raw (non-normalized data)
+```{r}
 Mj1=CreateSeuratObject(counts = data1, project = "Mj_hem1", min.cells = 0, min.features = 100)
 Mj2=CreateSeuratObject(counts = data2, project = "Mj_hem2", min.cells = 0, min.features = 100)
 Mj3=CreateSeuratObject(counts = data3, project = "Mj_hem3", min.cells = 0, min.features = 100)
+```
 
-#Select single cell
-Mj1 <- subset(Mj1, subset = nFeature_RNA > 100 & nFeature_RNA < 2500)
-Mj2 <- subset(Mj2, subset = nFeature_RNA > 100 & nFeature_RNA < 2500)
-Mj3 <- subset(Mj3, subset = nFeature_RNA > 100 & nFeature_RNA < 2500)
+## Percent of MT
+```{r}
+Mj1[["percent.mt"]] <- PercentageFeatureSet(Mj1, pattern = "^MT-")
+Mj2[["percent.mt"]] <- PercentageFeatureSet(Mj2, pattern = "^MT-")
+Mj3[["percent.mt"]] <- PercentageFeatureSet(Mj3, pattern = "^MT-")
+```
 
-#Merge seurat objects
-hem.combined <- merge(x = Mj1, y =c(Mj2, Mj3), add.cell.ids = c("Mj1", "Mj2", "Mj3"), project = "Mj_hem")
+## Plotting
+```{r}
+plot1 <- FeatureScatter(Mj1, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(Mj1, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+plot3 <- FeatureScatter(Mj2, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot4 <- FeatureScatter(Mj2, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot3 + plot4
+plot5 <- FeatureScatter(Mj3, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot6 <- FeatureScatter(Mj3, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot5 + plot6
+```
 
-# notice the cell names now have an added identifier
+## Select single cell
+```{r}
+Mj1e <- subset(Mj1, subset = nFeature_RNA > 500 & nFeature_RNA < 4000 &  percent.mt < 10 & percent.mt > 1)
+Mj2e <- subset(Mj2, subset = nFeature_RNA > 500 & nFeature_RNA < 4000 &  percent.mt < 10 & percent.mt > 1)
+Mj3e <- subset(Mj3, subset = nFeature_RNA > 500 & nFeature_RNA < 4000 &  percent.mt < 10 & percent.mt > 1)
+```
+
+## Merge seurat objects
+```{r}
+hem.combined <- merge(x = Mj1e, y =c(Mj2e, Mj3e), add.cell.ids = c("Mj1e", "Mj2e", "Mj3e"), project = "Mj_hem")
+```
+
+## Notice the cell names now have an added identifier
+```{r}
 head(x = hem.combined@active.ident)
 table(hem.combined@meta.data$orig.ident)
+```
 
-#Split object
+## Split object
+```{r}
 list <- SplitObject(hem.combined, split.by = "orig.ident")
 list <- list[c("Mj_hem1", "Mj_hem2", "Mj_hem3")]
+```
 
-#SCTransform
-for (i in 1:length(list)) {
-    list[[i]] <- SCTransform(list[[i]],  verbose = TRUE, variable.features.n = 3000)
-}
+## SCTransform
+```{r}
+list <- lapply(X = list, FUN = SCTransform, method = "glmGamPoi", vars.to.regress = "percent.mt", variable.features.n = 3000)
+```
 
-#select features for downstream integration, and run PrepSCTIntegration, which ensures that all necessary Pearson residuals have been calculated.
+## Integration
+```{r}
 features <- SelectIntegrationFeatures(object.list = list, nfeatures = 3000)
-list <- PrepSCTIntegration(object.list = list, anchor.features = features, verbose = TRUE)
-
-#Next, identify anchors and integrate the datasets. Commands are identical to the standard workflow, but make sure to set normalization.method = 'SCT':
-anchors <- FindIntegrationAnchors(object.list = list, normalization.method = "SCT", k.filter = 200, anchor.features = features, verbose = TRUE)
-
-#Commands are identical to the standard workflow, but do not run the ScaleData function after integration. You can see that after integration, cells group by their biological cell type (which has been pre-annotated), instead of by their underlying technology.
-all_features <- lapply(list, row.names) %>% Reduce(intersect, .) 
-
-#to integrate all features from all_genes, add them to the PrepSCTIntegration step, rerun the PrepSCTIntegration and FindIntegrationAnchors steps
-list <- PrepSCTIntegration(object.list = list, anchor.features = all_features)
+list <- PrepSCTIntegration(object.list = list, anchor.features = features)
 anchors <- FindIntegrationAnchors(object.list = list, normalization.method = "SCT", anchor.features = features)
-integrated_all <- IntegrateData(anchorset = anchors, normalization.method = "SCT", dims = 1:30, features.to.integrate = all_features, verbose = T)
-integrated_all <- RunPCA(integrated_all, assay = "integrated", verbose = TRUE, npcs = 50)
-integrated_all <- RunUMAP(integrated_all, assay = "integrated", dims = 1:30, n.neighbors = 10L, min.dist = 0.1, angular.rp.forest = "cosine",  n.components = 2)
-integrated_all <- FindNeighbors(integrated_all, dims = 1:30, k.param = 20, verbose = TRUE)
-integrated_all <- FindClusters(integrated_all, verbose = TRUE, algorithm = 1, resolution = 0.5)
+combined.sct <- IntegrateData(anchorset = anchors, normalization.method = "SCT")
+combined.sct <- RunPCA(combined.sct, verbose = FALSE)
+combined.sct <- RunUMAP(combined.sct, reduction = "pca", dims = 1:30, n.neighbors = 25L, min.dist = 0.1, n.components = 2L, umap.method = "uwot")
+DimPlot(combined.sct, reduction = "umap", split.by = "orig.ident")
+```
 
-#rename
-new.cluster.ids <- c("Hem6", "Hem4", "Hem2", "Hem9", "Hem3", "Hem7", "Hem8", "Hem5", "Hem1")
-names(new.cluster.ids) <- levels(integrated_all)
-integrated_all <- RenameIdents(integrated_all, new.cluster.ids)
-levels(integrated_all) <- c("Hem1", "Hem2", "Hem3", "Hem4", "Hem5", "Hem6", "Hem7", "Hem8", "Hem9")
-#levels(integrated_all)
-_______________________________________________________________________________________________________
-#Pseudotime
-monocle <- as(as.matrix(GetAssayData(integrated_all, assay = "integrated", slot = "scale.data")), 'sparseMatrix')
-pd <- data.frame(integrated_all@meta.data)
+## FindCluster
+```{r}
+combined.sct <- FindNeighbors(combined.sct, dims = 1:30, k.param = 50, verbose = TRUE)
+combined.sct <- FindClusters(combined.sct, verbose = TRUE, algorithm = 4, resolution = 0.4)
+DimPlot(combined.sct, reduction = "umap")
+```
 
-#keep only the columns that are relevant
-pData <- pd %>% select(orig.ident, nCount_SCT, nFeature_SCT)
-fData <- data.frame(gene_short_name = row.names(monocle), row.names = row.names(monocle))
+## Normalize RNA data for visualization purposes
+```{r}
+DefaultAssay(combined.sct) <- "RNA"
+combined.sct <- NormalizeData(combined.sct, verbose = FALSE)
+```
+## Rename
+```{r}
+new.cluster.ids <- c("Hem2", "Hem6", "Hem5", "Hem4", "Hem1", "Hem3")
+names(new.cluster.ids) <- levels(combined.sct)
+combined.sct <- RenameIdents(combined.sct, new.cluster.ids)
+levels(combined.sct) <- c("Hem1", "Hem2", "Hem3", "Hem4", "Hem5", "Hem6")
+```
 
-#Construct monocle cds
-monocle.object <- new_cell_data_set(expression_data = monocle, cell_metadata = pData, gene_metadata = fData)
+## FindMarkers
+```{r}
+Markers <- FindAllMarkers(combined.sct, only.pos = TRUE, min.pct = 0.5, logfc.threshold = 1, test.use = "bimod")
+```
 
-#preprocess
-monocle.object = preprocess_cds(monocle.object, num_dim = 30, norm_method = "none", pseudo_count = "NULL", method = "PCA", scaling= FALSE, use_genes = features)
-monocle.object = reduce_dimension(monocle.object, reduction_method = "UMAP", preprocess_method = "PCA", umap.n_neighbors = 10L, umap.min_dist = 0.1, umap.metric = "cosine", max_components = 2, umap.nn_method = "annoy", umap.fast_sgd = FALSE)
+## Collect gene expression
+```{r}
+expression <- apply(combined.sct@assays[["RNA"]]@data,1,sum)
+expression <- sort(expression, decreasing = TRUE)
+write.csv(expression, file="expression.csv")
+```
 
-#map pseudotime
-monocle.object = cluster_cells(monocle.object, reduction_method = "UMAP", k = 400, resolution = 0.8)
-monocle.object = learn_graph(monocle.object, RGE_method = "SimplePPT")
-monocle.object = order_cells(monocle.object, reduction_method = "UMAP")
-_______________________________________________________________________________________________________
-#Change default assay
-DefaultAssay(integrated_all) <- "RNA"
-
-#Find cluster markers
-Markers <- FindAllMarkers(integrated_all, assay = "RNA", only.pos = TRUE, min.pct = 0.5, logfc.threshold = 1, test.use = "poisson", features = all_features)
-
-#Change default assay
-DefaultAssay(integrated_all) <- "integrated"
-________________________________________________________________________________________________________
-#Saving
-write(all_features, file="all_features.txt")
-write(features, file="features.txt")
+#File saving
+```{r}
 write.csv(Markers, file="Markers.csv")
-saveRDS(integrated_all, file = "integrated_all.rds")
-saveRDS(Mj1, file = "Mj1.rds")
-saveRDS(Mj2, file = "Mj2.rds")
-saveRDS(Mj3, file = "Mj3.rds")
-saveRDS(monocle.object, file = "monocle.object.rds")
-________________________________________________________________________________________________________
-color9 = c("#1816A0", "#69D2E7", "#A6D64F", "#348c08", "#DDAE35", "#FFDE93", "#F96959", "#F38630", "#AA122C")
-color3 = c("#80BCA3", "#E6AC27", "#BF4D28")
-________________________________________________________________________________________________________
-#細胞数
-cell.num <- table(Idents(integrated_all))
-
-#UMI information on each shrimp
-#Data
-Tr <- c(Mj1@meta.data[["nCount_RNA"]], Mj2@meta.data[["nCount_RNA"]], Mj3@meta.data[["nCount_RNA"]])
-UMI <- c(Mj1@meta.data[["nFeature_RNA"]], Mj2@meta.data[["nFeature_RNA"]], Mj3@meta.data[["nFeature_RNA"]])
-groups <- c(rep("Shrimp1", 931), rep("Shrimp2", 1479), rep("Srhimp3", 294))
-#Number of UMI
-sinaplot(Tr, groups, col = color3, ylim = c(0,4000), pch = 20)
-boxplot(Mj1@meta.data[["nCount_RNA"]], Mj2@meta.data[["nCount_RNA"]], Mj3@meta.data[["nCount_RNA"]], col = rgb(0, 0, 0, 0), add = T, outline = F, boxwex=0.8) #400*450
-#Number of Genes
-sinaplot(UMI, groups, col = color3, ylim = c(0,1500), pch = 20)
-boxplot(Mj1@meta.data[["nFeature_RNA"]], Mj2@meta.data[["nFeature_RNA"]], Mj3@meta.data[["nFeature_RNA"]], col = rgb(0, 0, 0, 0), add = T, outline = F, boxwex=0.8) #400*450
-
-#UMI information on each cluster
-Hem1 <- subset(integrated_all, idents = "Hem1")
-Hem2 <- subset(integrated_all, idents = "Hem2")
-Hem3 <- subset(integrated_all, idents = "Hem3")
-Hem4 <- subset(integrated_all, idents = "Hem4")
-Hem5 <- subset(integrated_all, idents = "Hem5")
-Hem6 <- subset(integrated_all, idents = "Hem6")
-Hem7 <- subset(integrated_all, idents = "Hem7")
-Hem8 <- subset(integrated_all, idents = "Hem8")
-Hem9 <- subset(integrated_all, idents = "Hem9")
-#Data
-Tr_cl <- c(Hem1@meta.data[["nCount_RNA"]], Hem2@meta.data[["nCount_RNA"]], Hem3@meta.data[["nCount_RNA"]], Hem4@meta.data[["nCount_RNA"]], Hem5@meta.data[["nCount_RNA"]], Hem6@meta.data[["nCount_RNA"]], Hem7@meta.data[["nCount_RNA"]], Hem8@meta.data[["nCount_RNA"]], Hem9@meta.data[["nCount_RNA"]])
-UMI_cl <- c(Hem1@meta.data[["nFeature_RNA"]], Hem2@meta.data[["nFeature_RNA"]], Hem3@meta.data[["nFeature_RNA"]], Hem4@meta.data[["nFeature_RNA"]], Hem5@meta.data[["nFeature_RNA"]], Hem6@meta.data[["nFeature_RNA"]], Hem7@meta.data[["nFeature_RNA"]], Hem8@meta.data[["nFeature_RNA"]], Hem9@meta.data[["nFeature_RNA"]])
-groups_cl <- c(rep("Hem1", 65), rep("Hem2", 461), rep("Hem3", 313), rep("Hem4", 524), rep("Hem5", 92), rep("Hem6", 553), rep("Hem7", 170), rep("Hem8", 135), rep("Hem9", 391))
-#Number of Tr
-sinaplot(Tr_cl, groups_cl, ylim = c(0,4000), pch = 20, col = color9)
-boxplot(Hem1@meta.data[["nCount_RNA"]], Hem2@meta.data[["nCount_RNA"]], Hem3@meta.data[["nCount_RNA"]], Hem4@meta.data[["nCount_RNA"]], Hem5@meta.data[["nCount_RNA"]], Hem6@meta.data[["nCount_RNA"]], Hem7@meta.data[["nCount_RNA"]], Hem8@meta.data[["nCount_RNA"]], Hem9@meta.data[["nCount_RNA"]], col = rgb(0, 0, 0, 0), add = T, outline = F, boxwex=0.8) #750*450
-#Number of UMIs
-sinaplot(UMI_cl, groups_cl, ylim = c(0,1500), col = color9, pch = 20)
-boxplot(Hem1@meta.data[["nFeature_RNA"]], Hem2@meta.data[["nFeature_RNA"]], Hem3@meta.data[["nFeature_RNA"]], Hem4@meta.data[["nFeature_RNA"]], Hem5@meta.data[["nFeature_RNA"]], Hem6@meta.data[["nFeature_RNA"]], Hem7@meta.data[["nFeature_RNA"]], Hem8@meta.data[["nFeature_RNA"]], Hem9@meta.data[["nFeature_RNA"]], col = rgb(0, 0, 0, 0), add = T, outline = F, boxwex=0.8) #750*450
+saveRDS(Mj1e, file = "Mj1e.rds")
+saveRDS(Mj2e, file = "Mj2e.rds")
+saveRDS(Mj3e, file = "Mj3e.rds")
+saveRDS(hem.combined, file = "hem.combined.rds")
+saveRDS(combined.sct, file = "combined.sct.rds")
+```
