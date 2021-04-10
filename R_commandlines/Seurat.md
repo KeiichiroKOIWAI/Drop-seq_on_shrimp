@@ -78,7 +78,7 @@ list <- PrepSCTIntegration(object.list = list, anchor.features = features)
 anchors <- FindIntegrationAnchors(object.list = list, normalization.method = "SCT", anchor.features = features)
 combined.sct <- IntegrateData(anchorset = anchors, normalization.method = "SCT")
 combined.sct <- RunPCA(combined.sct, verbose = FALSE)
-combined.sct <- RunUMAP(combined.sct, reduction = "pca", dims = 1:30, n.neighbors = 25L, min.dist = 0.1, n.components = 2L, umap.method = "uwot")
+combined.sct <- RunUMAP(combined.sct, reduction = "pca", dims = 1:30, n.neighbors = 50L, min.dist = 0.2, n.components = 2L, umap.method = "uwot")
 DimPlot(combined.sct, reduction = "umap", split.by = "orig.ident")
 ```
 
