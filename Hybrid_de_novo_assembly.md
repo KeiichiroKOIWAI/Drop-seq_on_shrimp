@@ -1,3 +1,4 @@
+# Hybrid assembly
 ## Get short read sequence of shrimp hemocyte
 In this study we used this raw sequences from kuruma shrimop hemocytes  
 DDBJ Sequence Read Archive (DRA) accession number [DRR004781](https://ddbj.nig.ac.jp/DRASearch/submission?acc=DRA004781)  
@@ -98,7 +99,7 @@ cat rnaSPAdes/transcripts.fasta trinity/Trinity.fasta > Mj_hem_raw.fasta
 ```
 
 ## Remove duplicates and find coding contigs by EvidentialGene
-[EvidentialGene] (http://arthropods.eugenes.org/EvidentialGene/) var. 2022.01.20  
+[EvidentialGene](http://arthropods.eugenes.org/EvidentialGene/) var. 2022.01.20  
 ```
 perl ../Evigene/scripts/prot/tr2aacds4.pl \
 -cdnaseq \
@@ -119,7 +120,7 @@ seqkit stats -a okayset/Mj_hem_raw.okay.mrna
 seqtk seq -C /Mj_hem_raw.okay.mrna > seqs.fa.tmp
 seqtk rename seqs.fa.tmp Mj- > Mj_hem_tr.fasta
 ```
-
+# Quality checking
 ## BUSCO
 [BUSCO](https://busco.ezlab.org/) [ref](https://link.springer.com/protocol/10.1007%2F978-1-4939-9173-0_14) var.5.0.0
 Checking the quality of assembled transcripts.
@@ -132,4 +133,17 @@ busco \
 -l arthropoda_odb10 \
 -c 4 \
 -f
+```
+
+# Functional prediction
+## TransDecoder
+[TransDecoder](https://github.com/TransDecoder/TransDecoder/wiki) var.5.5.0
+```
+TransDecoder.LongOrfs -t Mj_hem_tr.fasta
+TransDecoder.Predict -t Mj_hem_tr.fasta
+```
+## eggNOG-mapper
+[eggNOG-mapper](http://eggnog-mapper.embl.de/) [ref](https://doi.org/10.1093/nar/gky1085) var.2.0
+```
+Run eggNOG-mapper on the browser with default settings
 ```
